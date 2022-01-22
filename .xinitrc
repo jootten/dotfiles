@@ -40,7 +40,7 @@ xrandr --auto --dpi 96
 xkbcomp .Xkeymap $DISPLAY
 
 # Set wallpaper
-xwallpaper --zoom $HOME/.config/wallpaper/plant.jpg &
+xwallpaper --zoom $HOME/.config/wallpaper/moon.jpg &
 
 # Start xcompmgr for transparency
 xcompmgr &
