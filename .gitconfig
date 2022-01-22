@@ -1,0 +1,7 @@
+[user]
+	email = jootten@uos.de
+	name = Jonas Otten
+[credential]
+	helper = store
+[diff]
+	tool = tkdiff
