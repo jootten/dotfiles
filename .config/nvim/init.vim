@@ -24,6 +24,7 @@ map <Leader>er :Explore<cr>
 map <Leader>ev :Explore<cr>
 hi! link netrwMarkFile Search
 
+map <Leader>c "+y
 " Window movement
 noremap <C-h> <C-W>h
 noremap <C-j> <C-W>j
@@ -33,12 +34,13 @@ noremap <C-l> <C-W>l
 " Buffers
 nmap <Leader>w :w!<cr>
 nmap <Leader>d :bd<cr>
-nmap <Leader>n :bn<cr>
-nmap <Leader>N :bprevious<cr>
 
 " Fugitive
-nmap <Leader>gg :vertical G<cr>
+nmap <Leader>gg :G<cr>
 nmap <Leader>gb :GBrowse<cr>
+nmap <Leader>gl :G log<cr>
+nmap <Leader>gp : G pull<cr>
+
 
 nmap <Leader>o :SymbolsOutline<cr>
 
@@ -95,6 +97,12 @@ Plug 'lervag/vimtex'
 Plug 'google/yapf', { 'rtp': 'plugins/vim', 'for': 'python' }
 Plug 'ellisonleao/glow.nvim'
 Plug 'nvie/vim-flake8'
+Plug 'pwntester/octo.nvim'
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nanotech/jellybeans.vim'
+Plug 'junegunn/goyo.vim'
+Plug 'NLKNguyen/papercolor-theme'
 
 call plug#end()
 
@@ -106,7 +114,7 @@ call plug#end()
 autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()
 
 "let g:onedark_style = 'deep'
-colorscheme onedark
+colorscheme jellybeans
 hi Normal guibg=NONE ctermbg=NONE
 
 " Find files using Telescope command-line sugar.
@@ -137,10 +145,28 @@ lua <<EOF
   -- Telescope setup
   local telescope = require('telescope')
   telescope.setup{}
+
+  -- Treesitter setup
+  require'nvim-treesitter.configs'.setup {
+    highlight = {
+      enable = true,
+      -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+      -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+      -- Using this option may slow down your editor, and you may see some duplicate highlights.
+      -- Instead of true it can also be a list of languages
+      additional_vim_regex_highlighting = false,
+    },
+  }
   
   local nvim_lsp = require('lspconfig')
   -- Use an on_attach function to only map the following keys
   -- after the language server attaches to the current buffer
+  local opts = { noremap=true, silent=true }
+  vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
+  vim.api.nvim_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+  vim.api.nvim_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+  vim.api.nvim_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
+
   local on_attach = function(client, bufnr)
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
     local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
@@ -164,17 +190,12 @@ lua <<EOF
     buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
     buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
     buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-    buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-    buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-    buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-    buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
     buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 
   end
   
   -- Setup linting
   require('lint').linters_by_ft = {
-    markdown = {'vale',},
     python = {'flake8',}
   }
   require("which-key").setup{}
@@ -284,6 +305,8 @@ lua <<EOF
   vim.g.symbols_outline = {
     width = 30,
   }
+
+  require('octo').setup()
 
   -- Terminal Setup
   require("toggleterm").setup{
