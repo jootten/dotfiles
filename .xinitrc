@@ -72,10 +72,7 @@ unclutter &
 # Start idle manager
 $HOME/bin/xsidle.sh slock &
 
+/usr/bin/prime-offload
 # Start dwm, reset dwm when quitting
-while true; do
-    # Log stderror to a file 
-    # No error logging
-    #dwm >/dev/null 2>&1
-    ssh-agent dwm
-done
+# exec $HOME/bin/startdwm
+ssh-agent dwm
