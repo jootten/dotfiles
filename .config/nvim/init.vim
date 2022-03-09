@@ -53,7 +53,7 @@ set shiftwidth=2
 set expandtab
 
 " Avoid installing nvimpy in every venv
-let g:python3_host_prog = '/bin/python'
+let g:python3_host_prog = '/opt/conda/bin/python'
 
 " Plugins
 " Auto Setup
