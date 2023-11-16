@@ -127,9 +127,7 @@ nmap('<leader>e', function()
   require('nnn').toggle('picker')
 end, 'Open [E]xplorer')
 
-require("indent_blankline").setup {
-  show_end_of_line = true,
-}
+require("ibl").setup()
 
 -- Markdown preview setup
 require('glow').setup()
