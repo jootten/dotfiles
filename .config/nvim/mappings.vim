@@ -10,18 +10,15 @@ inoremap jj <Esc>
 
 " Exit terminal with esc
 tnoremap <Esc> <C-\><C-n>
+tnoremap gg <C-\><C-n>
 nmap <Leader>t :terminal<cr>i
 
 " Set background
 nmap <Leader>sbl :set background=light<cr>
 nmap <Leader>sbd :set background=dark<cr>
 
+" Copy to system clipboard
 map <Leader>c "+y
-" Window movement
-noremap <C-h> <C-W>h
-noremap <C-j> <C-W>j
-noremap <C-k> <C-W>k
-noremap <C-l> <C-W>l
 
 " Buffers
 nmap <Leader>w :w!<cr>
@@ -30,23 +27,15 @@ nmap <Leader>r :bd<cr>
 " Fugitive
 nmap <Leader>gg :Ge :<cr>
 nmap <Leader>gb :GBrowse<cr>
-nmap <Leader>gl :G log --stat<cr>
+nmap <Leader>gl :G log<cr>
+nmap <Leader>gls :G log --stat<cr>
 nmap <Leader>gp : G pull<cr>
 
 " Symbols Outline
 nmap <Leader>o :SymbolsOutline<cr>
 
 " File browser
-noremap <Leader>e :NvimTreeToggle<cr>
-
-" Find files using Telescope command-line sugar.
-nnoremap <leader>ff <cmd>Telescope find_files find_command=rg,--hidden,--files,-g,!.git/<cr>
-nnoremap <leader>fl <cmd>Telescope live_grep<cr>
-nnoremap <leader>fb <cmd>Telescope buffers<cr>
-nnoremap <leader>fh <cmd>Telescope help_tags<cr>
-nnoremap <leader>fgs <cmd>Telescope git_status<cr>
-nnoremap <leader>fgc <cmd>Telescope git_commits<cr>
-nnoremap <leader>fgb <cmd>Telescope git_branches<cr>
+" noremap <Leader>e :NvimTreeToggle<cr>
 
 " Debug mappings
 nnoremap <silent> <leader>dn :lua require('dap-python').test_method()<CR>
@@ -63,3 +52,12 @@ nnoremap <silent> <Leader>dp <Cmd>lua require'dap'.set_breakpoint(nil, nil, vim.
 nnoremap <silent> <Leader>dr <Cmd>lua require'dap'.repl.open()<CR>
 nnoremap <silent> <Leader>dl <Cmd>lua require'dap'.run_last()<CR>
 nnoremap <silent> <Leader>K <Cmd>lua require('dap.ui.widgets').hover()<CR>
+
+" Tmux pane navigation
+let g:tmux_navigator_no_mappings = 1
+
+noremap <silent> <c-h> :<C-U>TmuxNavigateLeft<cr>
+noremap <silent> <c-j> :<C-U>TmuxNavigateDown<cr>
+noremap <silent> <c-k> :<C-U>TmuxNavigateUp<cr>
+noremap <silent> <c-l> :<C-U>TmuxNavigateRight<cr>
+" noremap <silent> {Previous-Mapping} :<C-U>TmuxNavigatePrevious<cr>

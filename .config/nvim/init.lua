@@ -2,15 +2,16 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true }) -- unset other mappings
+
 -- Load vim config files
 local config_path = vim.fn.stdpath('config')
-vim.cmd('source ' .. config_path  .. '/plugins.vim')
-vim.cmd('source ' .. config_path  .. '/mappings.vim')
-vim.cmd('source ' .. config_path  .. '/autocommands.vim')
+vim.cmd('source ' .. config_path .. '/plugins.vim')
+vim.cmd('source ' .. config_path .. '/mappings.vim')
+vim.cmd('source ' .. config_path .. '/autocommands.vim')
 
 -- Colorscheme and transparent background
-vim.cmd('colorscheme jellybeans')
-vim.cmd('hi Normal guibg=NONE ctermbg=NONE')
+-- vim.cmd('colorscheme catppuccin')
 
 -- Options
 local opt = vim.opt
@@ -19,8 +20,17 @@ opt.mouse = 'a' -- enable mouse
 opt.list = true -- show trailing spaces, tabs etc.
 opt.completeopt = 'menuone,noselect'
 vim.wo.signcolumn = 'yes' -- sign column always on
+opt.undofile = true -- undo history
+vim.o.termguicolors = true
+
 opt.breakindent = true -- wrapped lines same indent
-vim.o.undofile = true -- undo history
+opt.smartindent = true
+
+-- Sensible defaults
+opt.expandtab = true
+opt.shiftwidth = 2
+opt.tabstop = 2
+opt.softtabstop = 2
 
 opt.relativenumber = true -- relative line numbers
 opt.number = true -- but not the line we are on
@@ -40,7 +50,7 @@ opt.autoread = true
 opt.autowrite = true
 
 -- Netrw browser for ssh
-vim.g.netrw_altv='spr'
+vim.g.netrw_altv = 'spr'
 vim.g.netrw_banner = 0
 
 -- Airline
@@ -51,19 +61,78 @@ vim.g.vimtex_view_general_viewer = 'okular'
 vim.g.vimtex_view_general_options = [[--unique file:@pdf\#src:@line@tex]]
 vim.g.vimtex_quickfix_autoclose_after_keystrokes = 1
 
--- Avoid installing nvimpy in every venv
-vim.g.python3_host_prog = '/bin/python'
+-- Create a separate venv for pynvim!
+local venv = vim.fn.stdpath('data') .. '/venv'
+if vim.fn.isdirectory(venv) then
+  vim.g.python3_host_prog = venv .. '/bin/python'
+end
 
 -- Telescope setup
 local telescope = require('telescope')
 telescope.setup()
 
+local function nmap(keys, fun, desc)
+  vim.keymap.set('n', keys, fun, { desc = desc })
+end
+
+-- See `:help telescope.builtin`
+local actions = require "telescope.actions"
+nmap('<leader>?', require('telescope.builtin').oldfiles, '[?] Find recently opened files')
+nmap('<leader><space>', function()
+  require('telescope.builtin').buffers({
+    only_cwd = true,
+    path_display = { 'smart' },
+    attach_mappings = function(_, map)
+      map("i", "k", actions.move_selection_previous)
+      map("i", "j", actions.move_selection_next)
+      map("i", "x", actions.delete_buffer)
+      return true
+    end,
+  })
+end, '[ ] Find existing buffers')
+
+nmap('<leader>/', function()
+  -- You can pass additional configuration to telescope to change theme, layout, etc.
+  require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+    winblend = 10,
+    previewer = false,
+  })
+end, '[/] Fuzzily search in current buffer')
+
+nmap('<leader>ff', function()
+  require('telescope.builtin').find_files({
+    find_command = { 'rg', '--hidden', '--files', '-g', '!.git/', '-S' } -- include hidden, exclude git, smartcase
+  })
+end, '[F]ind [F]iles')
+
+nmap('<leader>fh', require('telescope.builtin').help_tags, '[F]ind [H]elp')
+nmap('<leader>fw', require('telescope.builtin').grep_string, '[F]ind current [W]ord')
+nmap('<leader>fl', require('telescope.builtin').live_grep, '[F]ind by [G]rep')
+nmap('<leader>fd', require('telescope.builtin').diagnostics, '[F]ind [D]iagnostics')
+
+nmap('<leader>fgs', require('telescope.builtin').git_status, '[F]ind [G]it [S]tatus')
+nmap('<leader>fgc', require('telescope.builtin').git_commits, '[F]ind [G]it [C]ommits')
+nmap('<leader>fgb', require('telescope.builtin').git_branches, '[F]ind [G]it [B]ranches')
+
 -- Tree explorer setup
 require("nvim-tree").setup()
+
+-- nnn file browser setup
+require("nnn").setup({
+  picker = {
+    session = "shared",
+  }
+})
+nmap('<leader>e', function()
+  require('nnn').toggle('picker')
+end, 'Open [E]xplorer')
 
 require("indent_blankline").setup {
   show_end_of_line = true,
 }
+
+-- Markdown preview setup
+require('glow').setup()
 
 -- Treesitter setup
 require 'nvim-treesitter.configs'.setup {
@@ -80,7 +149,7 @@ require 'nvim-treesitter.configs'.setup {
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local opts = { noremap = true, silent = true }
-vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
+vim.api.nvim_set_keymap('n', '<leader>sd', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
 vim.api.nvim_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
 vim.api.nvim_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
 vim.api.nvim_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
@@ -109,6 +178,8 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+
+  buf_set_keymap('n', '<leader>ds', "<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>", opts)
 end
 
 -- Setup lspconfig.
@@ -130,6 +201,7 @@ local servers = {
 -- Setup neovim lua completion, signature help etc.
 require('neodev').setup()
 
+-- Setup mason
 require('mason').setup()
 
 local mason_lspconfig = require 'mason-lspconfig'
@@ -166,11 +238,38 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 
 -- Python Debugging Setup
 local dap_python = require('dap-python')
-dap_python.setup('/usr/bin/python')
+dap_python.setup()
 dap_python.test_runner = 'pytest'
 
+table.insert(require('dap').configurations.python, {
+  type = 'python';
+  request = 'launch';
+  name = 'Debug current module';
+  module = function()
+    local file = vim.fn.expand('%')  -- get current file relative to wd
+    file = file:gsub('/', '.'):gsub('.py', '')  -- make module
+    return file
+  end;
+  console = "integratedTerminal";
+})
+table.insert(require('dap').configurations.python, {
+  type = 'python';
+  request = 'launch';
+  name = 'Debug current module with arguments';
+  module = function()
+    local file = vim.fn.expand('%')  -- get current file relative to wd
+    file = file:gsub('/', '.'):gsub('.py', '')  -- make module
+    return file
+  end;
+  args = function()
+    local args_string = vim.fn.input('Arguments: ')
+    return vim.split(args_string, " +")
+  end;
+  console = "integratedTerminal";
+})
+
 -- Setup lightbulb
-require('nvim-lightbulb').setup({autocmd = {enabled = true}})
+require('nvim-lightbulb').setup({ autocmd = { enabled = true } })
 
 -- Keymap help
 require("which-key").setup {}
@@ -314,3 +413,10 @@ require("toggleterm").setup {
     }
   }
 }
+
+require("catppuccin").setup({
+    flavour = "mocha", -- latte, frappe, macchiato, mocha
+    transparent_background = true, -- disables setting the background color.
+})
+-- vim.cmd('hi Normal guibg=NONE ctermbg=NONE')
+vim.cmd('colorscheme catppuccin')

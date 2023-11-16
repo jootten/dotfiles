@@ -13,6 +13,7 @@ Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'joshdick/onedark.vim'
 Plug 'nanotech/jellybeans.vim'
 Plug 'NLKNguyen/papercolor-theme'
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 
 " Find stuff
 Plug 'nvim-telescope/telescope.nvim' 
@@ -67,6 +68,7 @@ Plug 'hashivim/vim-terraform'
 Plug 'nvim-lua/plenary.nvim' " Lua utilities
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'luukvbaal/nnn.nvim'
 Plug 'kyazdani42/nvim-tree.lua'
 Plug 'folke/which-key.nvim'
 Plug 'akinsho/toggleterm.nvim' " Toggle terminal
@@ -76,5 +78,6 @@ Plug 'kyazdani42/nvim-web-devicons' " Icons
 Plug 'junegunn/goyo.vim' " Focus mode
 Plug 'jlanzarotta/bufexplorer'
 Plug 'lukas-reineke/indent-blankline.nvim'
+Plug 'christoomey/vim-tmux-navigator' " tmux pane navigation
 
 call plug#end()
