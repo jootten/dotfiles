@@ -1,13 +1,17 @@
 # Dotfiles
-These are my personal dotfiles. Work is still in progress. Use only as inspiration. :grin:
+These are my personal dotfiles.
 
-## Highlights
-* Fully fledged Neovim configuration with many useful plugins, keybindings and autocompletion. Optimized for Python development.
-* Low-level XKeymap that allows to fully utilize ijkl as arrow keys and uo as home/end when holding caps lock (only in US layout).
+## Stack
+* NeoVim: Editor, this repo contains extensive configuration optimized for Python development
+* Sway: Window manager based on Wayland
+* Oh My Zsh: Extends zsh with plugins etc.
+* Tmux: Terminal multiplexer
+* direnv: Manage environments based on current direcectory
+* foot: Terminal emulator
 
 ## Setup
 
-Set `config` git alias once, persisted later on in `.zshrc`.
+Set `dotfiles` git alias once, persisted later on in `.zshrc`.
 ```
 alias config='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 ```
@@ -22,7 +26,7 @@ config restore .
 
 ### Neovim
 
-1. LSP capabilities require node. To install you can use `nvm`.
+1. LSP capabilities require node and python. You can use `pnpm` and `uv` for the installation.
 
 ### ZSH
 
