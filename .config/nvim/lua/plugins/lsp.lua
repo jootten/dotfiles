@@ -52,37 +52,31 @@ return {
         "saghen/blink.cmp",
         "williamboman/mason.nvim",
         "williamboman/mason-lspconfig.nvim",
+        "nvim-telescope/telescope.nvim",
       },
       opts = {
         servers = {
+          "texlab",
+          "eslint",
+          "ts_ls",
+          "sourcekit",
+          "svelte",
+          "jsonnet_ls",
+          "bashls",
+          "lua_ls",
+          "clangd",
+        },
+        custom_configs = {
           basedpyright = {
-            -- settings = {
-            -- python = {
-            --     analysis = {
-            --       autoSearchPaths = true,
-            --       diagnosticMode = "openFilesOnly",
-            --       -- useLibraryCodeForTypes = true
-            --     }
-            --   }
-            -- }
-          },
-          texlab = {},
-          eslint = {},
-          ts_ls = {},
-          sourcekit = {
-            capabilities = {
-              workspace = {
-                didChangeWatchedFiles = {
-                  dynamicRegistration = true,
-                },
-              }
+            settings = {
+              basedpyright = {
+                  analysis = {
+                    useLibraryCodeForTypes = true,
+                    autoImportCompletions = false
+                  }
+                }
             }
           },
-          svelte = {},
-          jsonnet_ls = {},
-          bashls = {},
-          lua_ls = {},
-          clangd = {}
         }
       },
       config = function (_, opts)
@@ -90,21 +84,41 @@ return {
         local mason_lspconfig = require('mason-lspconfig')
 
         local ensure_installed = {}
-        for server, _ in pairs(opts.servers) do
+        for _, server in ipairs(opts.servers) do
           if server ~= "sourcekit" then
             table.insert(ensure_installed, server)
           end
         end
+
         mason_lspconfig.setup({
           ensure_installed = ensure_installed,
           automatic_installation = true,
         })
 
-        local lspconfig = require('lspconfig')
-        for server, config in pairs(opts.servers) do
-          config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities, true)
-          lspconfig[server].setup(config)
+        local capabilities = require('blink.cmp').get_lsp_capabilities({}, true)
+        capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = true
+        vim.lsp.config("*", { capabilities = capabilities })
+
+        for server, config in pairs(opts.custom_configs) do
+          vim.lsp.config(server, config)
         end
+
+        vim.keymap.set('n', 'grk', vim.diagnostic.open_float, {silent = true, noremap = true})
+
+        local telescope_builtin = require('telescope.builtin')
+        vim.api.nvim_create_autocmd('LspAttach', {
+          callback = function (args)
+            vim.keymap.set('n', '<leader>fk', telescope_builtin.lsp_document_symbols,
+              { desc = "[F]ind Buffer Symbols [K]urrent", noremap = true, silent = true })
+            vim.keymap.set('n', '<leader>fs', function ()
+              require('telescope.builtin').lsp_dynamic_workspace_symbols({
+                ignore_symbols = {
+                  'variable'
+                }
+              })
+            end, { desc = "[F]ind [S]ymbols", buffer = args.buf, noremap = true, silent = true })
+          end
+        })
       end
     },
   },
@@ -154,6 +168,7 @@ return {
   {
     'nvimtools/none-ls.nvim',
     dependencies = { 'lewis6991/gitsigns.nvim' },
+    enabled = true,
     config = function ()
       -- Setup formatters
       local null_ls = require("null-ls")
