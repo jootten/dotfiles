@@ -17,7 +17,10 @@ export EDITOR='nvim'
 
 # Aliases
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-
+alias vi=nvim
+alias tm=tmux
+alias lg=lazygit
+alias lg-dotfiles="lazygit -g $HOME/.dotfiles -w $HOME"
 
 # === Begin tools configuration ===
 eval "$(direnv hook zsh)"
