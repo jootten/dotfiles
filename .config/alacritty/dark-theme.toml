@@ -1,0 +1,4 @@
+[general]
+import = [
+  "./themes/themes/catppuccin_mocha.toml"
+]
