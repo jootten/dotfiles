@@ -6,6 +6,7 @@ return {
     'nvim-neotest/nvim-nio',
     'rcarriga/nvim-dap-ui',
   },
+  enabled = false,
   config = function ()
     local dap = require('dap')
     dap.defaults.fallback.terminal_win_cmd = 'vsplit new'
