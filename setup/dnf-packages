@@ -18,6 +18,11 @@ btop
 tmux
 alacritty
 fd
+visidata
+perl-Image-ExifTool
+pre-commit
+parallel
+dnf-plugins-core
 
 go
 clang

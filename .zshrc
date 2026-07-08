@@ -29,6 +29,7 @@ if command -v direnv > /dev/null 2>&1; then
   eval "$(direnv hook zsh)"
 fi
 
+export NIX_SSL_CERT_FILE=/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
 if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then . $HOME/.nix-profile/etc/profile.d/nix.sh; fi
 
 if [ -f ".envrc" ]; then direnv reload; fi
@@ -42,8 +43,6 @@ if [ -f "/lib64/google-cloud-sdk/path.zsh.inc"  ]; then . "/lib64/google-cloud-s
 if [ -f "/lib64/google-cloud-sdk/completion.zsh.inc" ]; then . "/lib64/google-cloud-sdk/completion.zsh.inc"; fi
 
 if [ -f "$HOME/.nix-profile/share/zsh/site-functions/_gcloud" ]; then . "$HOME/.nix-profile/share/zsh/site-functions/_gcloud"; fi
-
-if [ -f "$HOME/.nix-profile/share/zsh/site-functions/_uv" ]; then . "$HOME/.nix-profile/share/zsh/site-functions/_uv"; fi
 
 # pnpm
 export PNPM_HOME="/home/jonas/.local/share/pnpm"
