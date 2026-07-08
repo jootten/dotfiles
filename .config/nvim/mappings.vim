@@ -29,9 +29,6 @@ nmap <Leader>gl :G log<cr>
 nmap <Leader>gls :G log --stat<cr>
 nmap <Leader>gca :G commit -a --verbose<cr>
 
-" Symbols Outline
-nmap <Leader>o :SymbolsOutline<cr>
-
 " File browser
 " noremap <Leader>e :NvimTreeToggle<cr>
 
