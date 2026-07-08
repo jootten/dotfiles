@@ -21,9 +21,9 @@ local opt = vim.o
 opt.mouse = 'a' -- enable mouse
 opt.list = true -- show trailing spaces, tabs etc.
 opt.completeopt = 'menuone,noselect'
--- vim.wo.signcolumn = 'yes' -- sign column always on
+vim.wo.signcolumn = 'yes' -- sign column always on
 opt.undofile = true -- undo history
-vim.o.termguicolors = true
+-- vim.o.termguicolors = true
 
 opt.breakindent = true -- wrapped lines same indent
 opt.smartindent = true

@@ -33,7 +33,7 @@ return {
           border = 'shadow', -- single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
           width = 150,
           height = 40,
-          winblend = 3,
+          winblend = 0,
           highlights = {
             border = "Normal",
             background = "Normal",

@@ -6,4 +6,5 @@ return {
   'tpope/vim-unimpaired',
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
   'tpope/vim-obsession',
+  'tpope/vim-repeat',
 }
