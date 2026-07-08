@@ -24,6 +24,11 @@ rm -r tmp
 config restore .
 ```
 
+Hide untracked files so `git status` and lazygit stay usable (config is per-clone):
+```
+config config status.showUntrackedFiles no
+```
+
 ### Neovim
 
 1. LSP capabilities require node and python. You can use `pnpm` and `uv` for the installation.
