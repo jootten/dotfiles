@@ -44,11 +44,22 @@ if [ -f "/lib64/google-cloud-sdk/completion.zsh.inc" ]; then . "/lib64/google-cl
 
 if [ -f "$HOME/.nix-profile/share/zsh/site-functions/_gcloud" ]; then . "$HOME/.nix-profile/share/zsh/site-functions/_gcloud"; fi
 
+# mise
+if [ -x "$HOME/.local/bin/mise" ]; then
+  eval "$("$HOME/.local/bin/mise" activate zsh)"
+fi
+
 # pnpm
-export PNPM_HOME="/home/jonas/.local/share/pnpm"
+if [ "$(uname)" = "Darwin" ]; then
+  export PNPM_HOME="$HOME/Library/pnpm"
+  pnpm_bin="$PNPM_HOME/bin"
+else
+  export PNPM_HOME="$HOME/.local/share/pnpm"
+  pnpm_bin="$PNPM_HOME"
+fi
 case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+  *":$pnpm_bin:"*) ;;
+  *) export PATH="$pnpm_bin:$PATH" ;;
 esac
-if [ -f "~/.completion-for-pnpm.zsh" ]; then . "~/.completion-for-pnpm.zsh"; fi
+unset pnpm_bin
 # === End tools configuration ===
