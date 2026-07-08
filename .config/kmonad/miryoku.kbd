@@ -5,16 +5,18 @@
        
        
        
+;; Usb Gaming Keyboard
+;; Wired Keyboard 600
 (defcfg
-  input (device-file "/dev/input/by-id/usb-GIGABYTE_USB-HID_Keyboard_AP0000000003-event-kbd")
-  output (uinput-sink "Miryoku KMonad output")
+  input (iokit-name "Usb Gaming Keyboard")
+  output (kext)
   fallthrough false
 )
 (defsrc
-  grv 1 2 3 4 8 9 0 - =
-  tab q w e r i o p [ ]
-  caps a s d f k l ; ' ent
-                z x c , . /
+  grv 1 2 3 4 7 8 9 0 -
+  tab q w e r y u i o p
+  caps a s d f h j k l ;
+                z x c n m ,
 )
 (deflayer U_BASE
 q	w	e	r	t	y	u	i	o	p
