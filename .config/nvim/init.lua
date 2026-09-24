@@ -71,7 +71,7 @@ vim.g.vimtex_quickfix_autoclose_after_keystrokes = 1
 
 -- Create a separate venv for pynvim!
 local venv = vim.fn.stdpath('data') .. '/venv'
-if vim.fn.isdirectory(venv) then
+if vim.fn.isdirectory(venv) == 1 then
   vim.g.python3_host_prog = venv .. '/bin/python'
 end
 

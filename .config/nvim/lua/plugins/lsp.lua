@@ -125,18 +125,36 @@ return {
   },
   {
     'nvim-treesitter/nvim-treesitter',
+    branch = 'main',
+    lazy = false, -- the `main` branch does not support lazy-loading
+    build = ':TSUpdate',
     config = function()
-      local configs = require("nvim-treesitter.configs")
-      configs.setup({
-        highlight = { enable = true },
-        indent = { enable = true },
-        ensure_installed = { 'python', 'lua', 'markdown', 'json', 'yaml', 'typescript' },
-        auto_install = true,
-        sync_install = false,
+      require('nvim-treesitter').setup()
+
+      -- `main` dropped `auto_install`, so parsers are listed explicitly.
+      -- Note: `tmux` and `swift` are no longer shipped by `main`; their
+      -- prebuilt parsers survive in this plugin's own `parser/` dir.
+      require('nvim-treesitter').install({
+        'bash', 'c', 'cpp', 'dockerfile', 'git_rebase', 'gitignore', 'html',
+        'json', 'jsonnet', 'lua', 'markdown', 'markdown_inline', 'nix',
+        'python', 'query', 'sql', 'toml', 'tsx', 'typescript',
+        'vim', 'vimdoc', 'yaml',
       })
-      vim.wo.foldmethod = 'expr'
-      vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+
       vim.o.foldlevelstart = 99
+
+      -- Highlight/fold/indent now come from Neovim itself; this plugin only
+      -- ships the parsers and queries they run on.
+      vim.api.nvim_create_autocmd('FileType', {
+        callback = function(args)
+          if not pcall(vim.treesitter.start, args.buf) then
+            return -- no parser for this filetype
+          end
+          vim.wo[0][0].foldmethod = 'expr'
+          vim.wo[0][0].foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+          vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end,
+      })
     end
   },
   {
